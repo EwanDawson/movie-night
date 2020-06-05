@@ -4,6 +4,11 @@ Class {
 	#category : #MovieNight
 }
 
+{ #category : #configuring }
+IMDBAPI class >> apiKey [
+	^ 'imdb-api.key' asFileReference contents
+]
+
 { #category : #constants }
 IMDBAPI class >> baseUrl [
 	^'https://imdb-api.com/en/API/Top250Movies/'.
