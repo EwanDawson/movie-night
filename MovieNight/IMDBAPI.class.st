@@ -1,12 +1,15 @@
 Class {
 	#name : #IMDBAPI,
 	#superclass : #Object,
+	#classVars : [
+		'Key'
+	],
 	#category : #MovieNight
 }
 
 { #category : #configuring }
 IMDBAPI class >> apiKey [
-	^ 'imdb-api.key' asFileReference contents
+	^ Key ifNil: [ Key := 'imdb-api.key' asFileReference contents ]
 ]
 
 { #category : #constants }
