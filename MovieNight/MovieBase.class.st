@@ -13,6 +13,32 @@ Class {
 	#category : #MovieNight
 }
 
+{ #category : #accessing }
+MovieBase class >> convertFrom: moviebaseFilename toTriplestore: triplestoreFilename [
+  <script:  'self convertFrom: ''movies.db'' toTriplestore: ''triplestore.db'''>
+	| moviebase triples attrs |
+	triples := SQLite3Connection on: 'triplestore.db'.
+	triples open; beginTransaction.
+	moviebase := self new location: 'movies.db'; open; refresh; yourself.
+	attrs :=  { #title. #studio. #castAndCrew. #genres. #medium. #year. #seen. #rewatchable }.
+	moviebase movies associationsDo: [ :movie |
+		| id data |
+		id := 'moviebase:', movie key asString.
+		data := movie value.
+		attrs do: [ :attr |
+			| attrName attrValue |
+			attrValue := data perform: attr.
+			attrValue ifNotNil: [
+			attrName := attr asString.
+			triples execute: 'insert into triples values (?, ?, ?)' with: { id. attrName. attrValue asString trim }
+		]].
+	].
+	triples commitTransaction.
+	moviebase close.
+	triples close.
+
+]
+
 { #category : #constants }
 MovieBase class >> databasePrepDDL [
 ^ '
@@ -107,7 +133,7 @@ MovieBase >> managed: aMovieId [
 
 { #category : #accessing }
 MovieBase >> movies [
-	^ movies values
+	^ movies
 ]
 
 { #category : #'initialize-release' }
