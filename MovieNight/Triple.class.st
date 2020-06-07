@@ -89,7 +89,6 @@ Triple >> value [
 
 { #category : #accessing }
 Triple >> value: anObject [
-	value := anObject
-		ifNotNil: #value
-		ifNil: [ self error: 'Value cannot be nil' ]
+	value = anObject ifTrue: [ ^ self ].
+	value := anObject ifNotNil: #value
 ]

@@ -58,38 +58,44 @@ Triplestore >> file: anObject [
 		ifNotNil: [ self error: 'File is already set' ]
 ]
 
-{ #category : #testing }
-Triplestore >> includesEntity: anEntityId attribute: anAttributeId [
-	^ (eav at: anEntityId at: anAttributeId ifAbsent: nil) isNotNil
-]
-
-{ #category : #private }
-Triplestore >> index: aTriple [
-	eav at: aTriple entity at: aTriple attribute put: aTriple.
+{ #category : #adding }
+Triplestore >> forEntity: anEntityId attribute: anAttributeId setValue: anObject [
+	^ (self tripleForEntity: anEntityId attribute: anAttributeId) value: anObject; yourself 
 ]
 
 { #category : #initialization }
 Triplestore >> initialize [
-	eav := Dictionary new
+	self initialize: nil
+]
+
+{ #category : #initialization }
+Triplestore >> initialize: anInteger [
+	"Initialize the store to hold an initial `anInteger` number of triples"
+	eav := anInteger ifNil: [ Dictionary new ] ifNotNil: [ Dictionary new: anInteger ]
+]
+
+{ #category : #testing }
+Triplestore >> isValueDefinedForEntity: anEntityId attribute: anAttributeId [
+	^ (eav at: anEntityId at: anAttributeId ifAbsent: nil) isNotNil
 ]
 
 { #category : #private }
 Triplestore >> load [
-	| size triples |
-	size := (db execute: 'select count(*) from triple') onlyValue asInteger.
-	triples := (db execute: 'select entity, attr, value from triple') rows
-		collect: [ :row | self newTriple: row ]
-		into: (OrderedCollection new: size).
-	eav removeAll.
-	triples do: [ :triple | self index: triple ]
+	| results |
+	results := (db execute: 'select entity, attr, value from triple') rows.
+	self initialize: results size.
+	results do: [ :row |
+		| triple |
+		triple := self tripleForEntity: row first attribute: row second.
+		triple property: #value rawValue: row third value ]
 ]
 
 { #category : #private }
 Triplestore >> newTriple: aCollection [
-	^ Triple for: aCollection onChange: [ :t :new :old |
-		(self includesEntity: t entity attribute: t attrbute)
-			ifTrue: [ self upsert: t ]
-			ifFalse: [ self error: 'This triple has been deleted' ]]
+	^ Triple for: aCollection onChange: [ :triple :newValue :oldValue |
+			newValue
+				ifNil: [ self delete: triple ]
+				ifNotNil: [ self upsert: triple ]]
 ]
 
 { #category : #'initialize-release' }
@@ -99,41 +105,14 @@ Triplestore >> open [
 	self load.
 ]
 
-{ #category : #removing }
-Triplestore >> removeEntity: anEnityId attribute: anAttributeId [
-	| triple |
-	(self includesEntity: anEnityId attribute: anAttributeId)
-		ifFalse: [ ^ self ].
-	triple := self tripleForEntity: anEnityId attribute: anAttributeId.
-	self delete: triple.
-	self unindex: triple
-]
-
-{ #category : #adding }
-Triplestore >> storeEntity: anEntityId attribute: anAttributeId value: anObject [
-	(self includesEntity: anEntityId attribute: anAttributeId)
-		ifTrue: [ ^ (self tripleForEntity: anEntityId attribute: anAttributeId) value: anObject ]
-		ifFalse: [
-			| triple |
-			triple := self newTriple: { anEntityId . anAttributeId . anObject }.
-			self upsert: triple.
-			self index: triple.
-			^ triple ]
-]
-
 { #category : #lookup }
 Triplestore >> tripleForEntity: anEntityId attribute: anAttributeId [
-	^ eav at: anEntityId at: anAttributeId
+	^ eav at: anEntityId at: anAttributeId ifAbsentPut: [ self newTriple: { anEntityId. anAttributeId }  ]
 ]
 
 { #category : #lookup }
 Triplestore >> triplesForEntity: anEntityId [
 	^ (eav at: anEntityId) values 
-]
-
-{ #category : #private }
-Triplestore >> unindex: aTriple [
-	(eav at: aTriple entity) removeKey: aTriple attribute.
 ]
 
 { #category : #private }
