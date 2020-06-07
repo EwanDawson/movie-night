@@ -1,3 +1,34 @@
+"
+I represent an Entity-Attribute-Value (EAV) triple.
+
+My entity, attribute and value properties are arbitrary values, although normal I expect my
+entity and attribute properties to by symbols.
+
+My entity and attribute properties must not be nil, and cannot be updated once set.
+
+My value property is observable (I use the TObservable trait to implement observability of this property).
+Users can specify a block to be invoked when my value property changes. The block will be called with
+three arguments: myself, the new value of my value property, and the old value of my value property.
+The block will only be called if the old and new values are not equal.
+
+To construct instances of me, use one of my class methods in the ""instance creation"" protocol. For example:
+
+	triple := Triple
+		entity: #entity123
+		attribute: #name
+		value: 'my entity'
+		onChange: [ :triple :newValue :oldValue |
+			| message |
+			message := String streamContents: [ :s |
+				s << triple entity << $/ << triple attribute << ': ' << oldValue << ' <- ' << newValue ].
+			Transcript show: message; cr].
+		
+	triple value: 'your entity'
+	
+Will result in the following Transcript output:
+
+  ""entity123/name: my entity -> your entity""
+"
 Class {
 	#name : #Triple,
 	#superclass : #Object,
