@@ -1,0 +1,9 @@
+SmalltalkCISpec {
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'MovieNight',
+      #directory : 'src',
+      #platforms : [ #pharo ]
+    }
+  ]
+}
