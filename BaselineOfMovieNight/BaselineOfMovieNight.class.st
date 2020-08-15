@@ -9,9 +9,15 @@ Class {
 
 { #category : #baselines }
 BaselineOfMovieNight >> baseline: spec [
+	<baseline>
 	spec
 		for: #common
-		do: [ spec
+		do: [ "Dependencies"
+			self xmlParser: spec.
+			self sqlite3: spec.
+
+			"Packages"
+			spec
 				package: 'MovieNight';
 				package: 'MovieNight-Tests'
 					with: [ spec requires: #('MovieNight') ] ]
@@ -20,4 +26,16 @@ BaselineOfMovieNight >> baseline: spec [
 { #category : #accessing }
 BaselineOfMovieNight >> projectClass [
 	^ MetacelloCypressBaselineProject
+]
+
+{ #category : #baselines }
+BaselineOfMovieNight >> sqlite3: spec [
+	spec baseline: 'SQLite3' with: [ spec repository: 'github://pharo-rdbms/Pharo-SQLite3/src' ]
+]
+
+{ #category : #baselines }
+BaselineOfMovieNight >> xmlParser: spec [
+	spec
+		baseline: 'XMLParser'
+		with: [ spec repository: 'github://pharo-contributions/XML-XMLParser/src' ]
 ]
