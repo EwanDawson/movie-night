@@ -9,5 +9,15 @@ Class {
 
 { #category : #baselines }
 BaselineOfMovieNight >> baseline: spec [
-	spec for: #common do: [ spec package: 'MovieNight' ]
+	spec
+		for: #common
+		do: [ spec
+				package: 'MovieNight';
+				package: 'MovieNight-Tests'
+					with: [ spec requires: #('MovieNight') ] ]
+]
+
+{ #category : #accessing }
+BaselineOfMovieNight >> projectClass [
+	^ MetacelloCypressBaselineProject
 ]
