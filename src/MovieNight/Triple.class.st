@@ -1,10 +1,12 @@
 "
 I represent an Entity-Attribute-Value (EAV) triple.
 
-My entity, attribute and value properties are arbitrary values, although normal I expect my
-entity and attribute properties to by symbols.
+My entity, attribute and value properties are arbitrary values, although I expect my
+entity and attribute properties will normally be symbols.
 
 My entity and attribute properties must not be nil, and cannot be updated once set.
+
+My value can be changed by sending me the value: message.
 
 My value property is observable (I use the TObservable trait to implement observability of this property).
 Users can specify a block to be invoked when my value property changes. The block will be called with
