@@ -1,3 +1,18 @@
+"
+I am an interface to Wikipedia.
+
+I can extract structured data about certain topics from some Wikipedia articles. I make certain assumptions about the structure of the articles I access - if the structure changes, I may break.
+
+I provide data as simple collections and dictionaries.
+
+My public API is organised into protocols based on topic.
+
+My most basic operation is to retrieve the HTML DOM for an article:
+
+```
+Wikipedia new domForArticle: 'Smalltalk'
+```
+"
 Class {
 	#name : #Wikipedia,
 	#superclass : #Object,
