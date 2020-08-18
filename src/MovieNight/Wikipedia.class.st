@@ -26,15 +26,15 @@ Wikipedia class >> allFilmsSince: aYear [
 ]
 
 { #category : #constants }
-Wikipedia >> baseUrl [
+Wikipedia class >> baseUrl [
 	^'https://en.wikipedia.org/wiki/'
 ]
 
 { #category : #'wikipedia - parsing' }
 Wikipedia >> domForArticle: articleName [
 	| page |
-	page := (ZnEasy get: self baseUrl, articleName) entity.
-	^(XMLHTMLParser on: page) parseDocument 
+	page := (ZnEasy get: self class baseUrl, articleName) entity.
+	^(XMLHTMLParser on: page) parseDocument
 ]
 
 { #category : #private }
