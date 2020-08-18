@@ -13,13 +13,15 @@ BaselineOfMovieNight >> baseline: spec [
 	spec
 		for: #common
 		do: [ "Dependencies"
-			self xmlParser: spec.
-			self sqlite3: spec.
+			self
+				xmlParserHtml: spec;
+				xPath: spec;
+				sqlite3: spec.
 
 			"Packages"
 			spec
 				package: 'MovieNight'
-                    with: [ spec requires: #('SQLite3' 'XMLParser') ];
+					with: [ spec requires: #('SQLite3' 'XMLParser') ];
 				package: 'MovieNight-Tests'
 					with: [ spec requires: #('MovieNight') ] ]
 ]
@@ -29,14 +31,21 @@ BaselineOfMovieNight >> projectClass [
 	^ MetacelloCypressBaselineProject
 ]
 
-{ #category : #baselines }
+{ #category : #dependencies }
 BaselineOfMovieNight >> sqlite3: spec [
 	spec baseline: 'SQLite3' with: [ spec repository: 'github://pharo-rdbms/Pharo-SQLite3/src' ]
 ]
 
-{ #category : #baselines }
-BaselineOfMovieNight >> xmlParser: spec [
+{ #category : #dependencies }
+BaselineOfMovieNight >> xPath: spec [
 	spec
-		baseline: 'XMLParser'
-		with: [ spec repository: 'github://pharo-contributions/XML-XMLParser/src' ]
+		baseline: 'XPath'
+		with: [ spec repository: 'github://pharo-contributions/XML-XPath/src' ]
+]
+
+{ #category : #dependencies }
+BaselineOfMovieNight >> xmlParserHtml: spec [
+	spec
+		baseline: 'XMLParserHTML'
+		with: [ spec repository: 'github://pharo-contributions/XML-XMLParserHTML/src' ]
 ]
