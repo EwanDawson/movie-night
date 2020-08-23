@@ -22,7 +22,7 @@ BaselineOfMovieNight >> baseline: spec [
 			"Packages"
 			spec
 				package: 'MovieNight'
-					with: [ spec requires: #('SQLite3' 'XMLParser' 'Lazygun') ];
+					with: [ spec requires: #('SQLite3' 'XMLParserHTML' 'Lazygun') ];
 				package: 'MovieNight-Tests'
 					with: [ spec requires: #('MovieNight') ] ]
 ]
