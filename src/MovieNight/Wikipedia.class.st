@@ -16,6 +16,13 @@ Wikipedia new domForArticle: 'Smalltalk'
 Class {
 	#name : #Wikipedia,
 	#superclass : #Object,
+	#instVars : [
+		'client',
+		'cache'
+	],
+	#classInstVars : [
+		'default'
+	],
 	#category : #MovieNight
 }
 
@@ -30,6 +37,14 @@ Wikipedia class >> baseUrl [
 	^'https://en.wikipedia.org/wiki/'
 ]
 
+{ #category : #caching }
+Wikipedia class >> pageCache [
+	^ TTLCache new
+		timeToLive: 1 day;
+		maximumWeight: 100;
+		yourself
+]
+
 { #category : #'wikipedia - parsing' }
 Wikipedia >> domForArticle: articleName [
 	| page |
@@ -42,7 +57,7 @@ Wikipedia >> extractFilmDetails: xml [
 	| rows movieRows movieCells |
 	rows := xml xpath: '//th[contains(text(),"Opening")]/ancestor::table/tbody/tr'.
 	movieRows := rows select: [ :row | (row xpath: 'td') isNotEmpty ].
-	movieCells := movieRows collect: [ :row | (row xpath: 'td[not(@*)]') collect: [ :cell | cell stringValue ] ].
+	movieCells := movieRows collect: [ :row | (row xpath: 'td[not(@*)]') collect: [ :cell | cell stringValue trim] ].
 	^ movieCells
 			collect: [ :row | {
 				'title' -> (row at: 1).
