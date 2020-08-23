@@ -34,7 +34,12 @@ Wikipedia class >> allFilmsSince: aYear [
 
 { #category : #constants }
 Wikipedia class >> baseUrl [
-	^'https://en.wikipedia.org/wiki/'
+	^'https://en.wikipedia.org/wiki'
+]
+
+{ #category : #singleton }
+Wikipedia class >> default [
+	^ default ifNil: [ default := self new cache: self pageCache ]
 ]
 
 { #category : #caching }
@@ -45,11 +50,30 @@ Wikipedia class >> pageCache [
 		yourself
 ]
 
+{ #category : #accessing }
+Wikipedia >> cache [ 
+	^ cache 
+]
+
+{ #category : #accessing }
+Wikipedia >> cache: aCache [
+	"I will use the given AbstractCache instance to cache lookups by URL. Not that I don't respect
+	HTTP cache control headers - I rely on the eviction policy of the cache you provide"
+	cache := aCache
+]
+
 { #category : #'wikipedia - parsing' }
 Wikipedia >> domForArticle: articleName [
-	| page |
-	page := (ZnEasy get: self class baseUrl, articleName) entity.
-	^(XMLHTMLParser on: page) parseDocument
+	| fetcher |
+	fetcher := [ client
+		get;
+		contents ].
+	client
+		url: self class baseUrl;
+		addPathSegment: articleName.
+	^ cache
+		ifNil: fetcher
+		ifNotNil: [ cache at: client request url ifAbsentPut: fetcher ]
 ]
 
 { #category : #private }
@@ -67,6 +91,16 @@ Wikipedia >> extractFilmDetails: xml [
 				'medium' -> (row at: 5).
 				} asOrderedDictionary ]
 			thenReject: [ :movie | (movie at: 'title') isNil ]
+]
+
+{ #category : #initialization }
+Wikipedia >> initialize [
+	client := ZnClient new
+		systemPolicy;
+		contentReader: [ :entity | (XMLHTMLParser on: entity) parseDocument ];
+		url: self class baseUrl;
+		yourself
+			
 ]
 
 { #category : #'wikipedia - film' }
