@@ -9,7 +9,7 @@ Class {
 
 { #category : #private }
 IMDBAPI >> apiKey [
-	^ Key ifNil: [ Key := 'imdb-api.key' asFileReference contents ]
+	^ Key ifNil: [ Key := AuthInfo default machine: 'imdb-api.key'; password ]
 ]
 
 { #category : #private }

@@ -16,14 +16,21 @@ BaselineOfMovieNight >> baseline: spec [
 			self
 				xmlParserHtml: spec;
 				xPath: spec;
-				sqlite3: spec.
+				sqlite3: spec;
+				lazygun: spec.
 
 			"Packages"
 			spec
 				package: 'MovieNight'
-					with: [ spec requires: #('SQLite3' 'XMLParser') ];
+					with: [ spec requires: #('SQLite3' 'XMLParser' 'Lazygun') ];
 				package: 'MovieNight-Tests'
 					with: [ spec requires: #('MovieNight') ] ]
+]
+
+{ #category : #dependencies }
+BaselineOfMovieNight >> lazygun: spec [ 
+	spec
+		baseline: 'Lazygun' with: [ spec repository: 'github://EwanDawson/pharo-lazygun/src' ]
 ]
 
 { #category : #accessing }
