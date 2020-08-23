@@ -12,8 +12,8 @@ Class {
 
 { #category : #running }
 WikipediaTest >> setUp [
-	wiki := Wikipedia default.
-
+	super setUp.
+	wiki := Wikipedia new
 ]
 
 { #category : #test }
