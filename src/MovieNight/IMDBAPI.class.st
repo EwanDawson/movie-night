@@ -50,6 +50,13 @@ IMDBAPI >> ratingForTitle: aTitle year: aYear [
 ]
 
 { #category : #'imdb api' }
+IMDBAPI >> ratings: anImdbId [
+	"See 'https://imdb-api.com/api/#Ratings-body'"
+	
+	^ self query: #Ratings params: { anImdbId }
+]
+
+{ #category : #'imdb api' }
 IMDBAPI >> searchMovie: query [
 	"Invoke the 'SearchMovie' API with the given query"
 
