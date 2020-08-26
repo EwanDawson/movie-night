@@ -45,7 +45,7 @@ IMDBAPI >> queryUrlForApi: type path: pathSegments [
 IMDBAPI >> ratingForTitle: aTitle year: aYear [
 	| title details |
 	title := (self searchMovie: (Character space join: { aTitle. aYear })) first.
-	details := self titleByImdbId: (title at: #id).
+	details := self title: (title at: #id).
 	^ (details at: #imDbRating) asNumber
 ]
 
@@ -66,7 +66,7 @@ IMDBAPI >> searchMovie: query [
 ]
 
 { #category : #'imdb api' }
-IMDBAPI >> titleByImdbId: anImdbId [
+IMDBAPI >> title: anImdbId [
 	| options |
 	options := $, join: #( FullActor FullCast Posters Images Trailer Ratings Wikipedia ).
 	^ self query: #Title params: { anImdbId . options }
