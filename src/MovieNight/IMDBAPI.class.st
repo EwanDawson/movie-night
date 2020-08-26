@@ -1,3 +1,6 @@
+"
+I an an interface to the IMDB API at 'https://imdb-api.com/'
+"
 Class {
 	#name : #IMDBAPI,
 	#superclass : #Object,
